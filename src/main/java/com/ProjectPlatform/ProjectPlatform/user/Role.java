@@ -1,4 +1,4 @@
-package com.ProjectPlatform.ProjectPlatform.student;
+package com.ProjectPlatform.ProjectPlatform.user;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -8,18 +8,20 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "role")
-public class StudentRole {
+public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
 
-    public StudentRole() {
+    public Role() {
+
     }
 
-    public StudentRole(String name) {
+    public Role(String name) {
         super();
         this.name = name;
     }
+
 }
