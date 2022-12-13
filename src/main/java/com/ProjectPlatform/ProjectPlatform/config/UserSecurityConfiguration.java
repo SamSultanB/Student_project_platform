@@ -1,26 +1,27 @@
 package com.ProjectPlatform.ProjectPlatform.config;
 
-import com.ProjectPlatform.ProjectPlatform.student.StudentService;
+import com.ProjectPlatform.ProjectPlatform.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
-public class StudentSecurityConfiguration {
+public class UserSecurityConfiguration {
 
     @Autowired
-    private StudentService studentService;
+    private UserService userService;
+    @Autowired
+    private AuthenticationSuccessHandler roleSuccessHandler;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -30,7 +31,7 @@ public class StudentSecurityConfiguration {
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider(){
         DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
-        auth.setUserDetailsService(studentService);
+        auth.setUserDetailsService(userService);
         auth.setPasswordEncoder(passwordEncoder());
         return auth;
     }
@@ -46,8 +47,18 @@ public class StudentSecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-        http.csrf().disable().authorizeHttpRequests().requestMatchers("/","/registration/**").permitAll()
-                .anyRequest().authenticated().and().formLogin().loginPage("/login").defaultSuccessUrl("/home").permitAll()
+        String[] staticResources = {
+                "/sign.css",
+                "/home.css",
+                "/js/**",
+                "/fonts/**",
+                "/scripts/**",};
+
+        http.csrf().disable().authorizeHttpRequests().requestMatchers("/", "/authorization/**").permitAll()
+                .requestMatchers(staticResources).permitAll()
+                .requestMatchers("/lecturer-home/new-lecture","/lecturer-home/{id}", "/lecturer-home/lecture/{id}", "/lecturer-home/new-project").hasAuthority("LECTURER")
+                .requestMatchers("/home", "/home/{id}/{name}").hasAuthority("STUDENT")
+                .anyRequest().authenticated().and().formLogin().loginPage("/authorization").successHandler(roleSuccessHandler).permitAll()
                 .and().logout().invalidateHttpSession(true).clearAuthentication(true)
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/login?logout").permitAll();
