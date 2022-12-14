@@ -52,10 +52,6 @@ public class User {
     )
     private Collection<Lecture> lectures;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private Collection<Result> results;
-
 
 
     public User(
@@ -76,9 +72,7 @@ public class User {
         this.lectures.add(lecture);
     }
 
-    public void addResult(Result result){
-        this.results.add(result);
-    }
+
 
     public void removeLecture(Long lectureId){
         Lecture lecture = this.lectures.stream().filter(lecture1 -> lecture1.getId() == lectureId).findFirst().orElse(null);
