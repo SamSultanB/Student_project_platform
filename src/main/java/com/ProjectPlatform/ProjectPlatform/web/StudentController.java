@@ -41,7 +41,6 @@ public class StudentController {
 
     @PostMapping("/home")
     public ModelAndView findLecture(@ModelAttribute("lecture") Lecture lecture, Principal principal){
-
         String email = principal.getName();
         User user = userService.findByEmail(email);
         user.addLecture(lectureService.getLectureByLectureNameAndPassword(lecture.getLectureName(), lecture.getPassword()));
@@ -49,27 +48,37 @@ public class StudentController {
         return new ModelAndView("redirect:/home");
     }
 
-    @GetMapping("/home/{id}/{name}")
-    public ModelAndView lecturePage(@PathVariable("id") Long id, @PathVariable("name") String name, Model model, Principal principal){
+    @GetMapping("/home/{id}")
+    public ModelAndView lecturePage(@PathVariable("id") Long id, Model model, Principal principal){
+        model.addAttribute("redirect", id);
         model.addAttribute("projects", lectureService.getLectureById(id).getProjects());
-        model.addAttribute("lectureName", name);
         Lecture lecture = new Lecture();
         model.addAttribute("lecture", lecture);
         String email = principal.getName();
         Long Id = userService.findByEmail(email).getId();
         model.addAttribute("lectures", lectureService.getAllByUsersId(Id));
+
         return new ModelAndView("home");
     }
 
-    @PostMapping("/home/upload/{id}")
-    public ModelAndView uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("id") Long id, Principal principal) throws IOException {
+    @PostMapping("/home/upload/{id}/{redirect}")
+    public ModelAndView uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("id") Long id, @PathVariable("redirect") Long redirect, Principal principal) throws IOException {
         String email = principal.getName();
         Result result = new Result();
         result.setDoneProject(resultServiceImpl.uploadFile(file));
-        userService.findByEmail(email).addResult(result);
-        projectRepository.findById(id).get().getResults().add(result);
+        result.setCommment("no comments");
+        result.setMark("not graded");
+        result.setUser(userService.findByEmail(email));
+        result.setProject(projectRepository.findById(id).get());
         resultServiceImpl.save(result);
-        return new ModelAndView("redirect:/home");
+        return new ModelAndView("redirect:/home/{redirect}");
+    }
+
+    @GetMapping("/home/results/{id}")
+    public ModelAndView seeResults(@PathVariable("id") Long id, Model model, Principal principal){
+        Long userId = userService.findByEmail(principal.getName()).getId();
+        model.addAttribute("doneProjects", resultServiceImpl.getByUserIdAndProjectId(userId, id));
+        return new ModelAndView("results");
     }
 
 

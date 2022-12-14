@@ -46,9 +46,24 @@ public class ResultServiceImpl implements ResultService {
         return resultRepository.save(result);
     }
 
-//    @Override
-//    public List<Result> findAllByProjectsId(Long id){
-//        return resultRepository.getAllByProjectsId(id);
-//    }
 
+    @Override
+    public List<Result> getAllByProjectId(Long id) {
+        return resultRepository.getAllByProjectId(id);
+    }
+
+    @Override
+    public List<Result> getAllByUserId(Long id) {
+        return resultRepository.getAllByUserId(id);
+    }
+
+    @Override
+    public Result getByUserIdAndProjectId(Long userId, Long projectId) {
+        return resultRepository.getByUserIdAndProjectId(userId, projectId);
+    }
+
+    @Override
+    public Result getById(Long id) {
+        return resultRepository.findById(id).get();
+    }
 }

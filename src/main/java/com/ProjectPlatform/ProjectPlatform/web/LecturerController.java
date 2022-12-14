@@ -4,21 +4,33 @@ import com.ProjectPlatform.ProjectPlatform.lecture.Lecture;
 import com.ProjectPlatform.ProjectPlatform.lecture.LectureService;
 import com.ProjectPlatform.ProjectPlatform.project.Project;
 import com.ProjectPlatform.ProjectPlatform.project.ProjectRepository;
+import com.ProjectPlatform.ProjectPlatform.project.Result;
 import com.ProjectPlatform.ProjectPlatform.project.ResultServiceImpl;
 import com.ProjectPlatform.ProjectPlatform.user.UserService;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
 
 @RestController
 public class LecturerController {
 
+    private final Path root = Paths.get("uploads");
     private LectureService lectureService;
     private UserService userService;
     private ProjectRepository projectRepository;
     private ResultServiceImpl resultService;
+
 
     public LecturerController(LectureService lectureService, UserService userService, ProjectRepository projectRepository, ResultServiceImpl resultService) {
         this.lectureService = lectureService;
@@ -95,10 +107,48 @@ public class LecturerController {
 
     @GetMapping("/lecturer-home/uploads/{id}")
     public ModelAndView getUploads(@PathVariable("id") Long id, Model model){
-//        model.addAttribute("doneProjects", resultService.findAllByProjectsId(id));
+        model.addAttribute("doneProjects", resultService.getAllByProjectId(id));
+
         return new ModelAndView("uploads");
     }
 
+    @GetMapping("/lecturer-home/uploads/download/{name}")
+    public ResponseEntity<Object> downloadFile(@PathVariable("name") String name) throws IOException
+    {
+        String filename = "uploads//"+name;
+        File file = new File(filename);
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition",
+                String.format("attachment; filename=\"%s\"", file.getName()));
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+
+        ResponseEntity<Object> responseEntity = ResponseEntity.ok().headers(headers)
+                .contentLength(file.length())
+                .contentType(MediaType.parseMediaType("application/txt")).body(resource);
+
+        return responseEntity;
+    }
+
+
+
+    @GetMapping("/lecturer-home/lecture/grade/{id}")
+    public ModelAndView grade(@PathVariable("id") Long id, Model model){
+        model.addAttribute("id", id);
+        return new ModelAndView("grading");
+    }
+
+    @PostMapping("/lecturer-home/lecture/grade/{id}")
+    public ModelAndView saveGrade(@PathVariable("id") Long id, @ModelAttribute("comment") String comment, @ModelAttribute("mark") String mark){
+        Result result = resultService.getById(id);
+        result.setCommment(comment);
+        resultService.save(result);
+        result.setMark(mark);
+        resultService.save(result);
+        return new ModelAndView("redirect:/lecturer-home/lecture/grade/{id}");
+    }
 
 }

@@ -20,10 +20,6 @@ public class Project {
     @Column(name = "description", columnDefinition = "TEXT")
     private String  description;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "projects_id", referencedColumnName = "id")
-    private Collection<Result> results;
-
     public Project() {
     }
 
