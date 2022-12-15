@@ -41,15 +41,4 @@ public class Lecture {
         this.password = password;
     }
 
-//    public void addProject(Project project){
-//        this.projects.add(project);
-//    }
-
-//    public void removeProject(Long projectId){
-//        Project project = this.projects.stream().filter(project1 -> project1.getId() == projectId).findFirst().orElse(null);
-//        if(project != null){
-//            this.projects.remove(project);
-//        }
-//    }
-
 }

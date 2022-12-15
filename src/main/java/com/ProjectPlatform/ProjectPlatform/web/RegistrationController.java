@@ -1,6 +1,5 @@
 package com.ProjectPlatform.ProjectPlatform.web;
 
-import com.ProjectPlatform.ProjectPlatform.user.User;
 import com.ProjectPlatform.ProjectPlatform.user.UserService;
 import com.ProjectPlatform.ProjectPlatform.web.dto.UserDto;
 import org.springframework.web.bind.annotation.*;
@@ -21,11 +20,6 @@ public class RegistrationController {
         return new UserDto();
     }
 
-//    @GetMapping("/")
-//    public ModelAndView starterPage(){
-//        return new ModelAndView("starter");
-//    }
-
     @GetMapping("/authorization")
     public ModelAndView userRegistration(){
         return new ModelAndView("sign");
@@ -36,12 +30,5 @@ public class RegistrationController {
         userService.save(userDto);
         return new ModelAndView("redirect:/registration?success");
     }
-
-//    @GetMapping("/login")
-//    public ModelAndView login(){
-//        return new ModelAndView("sign");
-//    }
-
-
 
 }

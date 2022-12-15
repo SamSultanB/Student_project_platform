@@ -7,6 +7,5 @@ import java.util.List;
 public interface LectureRepository extends JpaRepository<Lecture, Long> {
 
     Lecture getLectureByLectureNameAndPassword(String lectureName, String password);
-
     List<Lecture> getAllByUsersId(Long id);
 }

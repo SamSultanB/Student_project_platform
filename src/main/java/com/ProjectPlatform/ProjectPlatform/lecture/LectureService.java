@@ -7,7 +7,6 @@ import java.util.List;
 //@Service
 public interface LectureService {
 
-
     List<Lecture> getAllLectures();
 
     List<Lecture> getAllByUsersId(Long id);

@@ -133,8 +133,6 @@ public class LecturerController {
         return responseEntity;
     }
 
-
-
     @GetMapping("/lecturer-home/lecture/grade/{id}")
     public ModelAndView grade(@PathVariable("id") Long id, Model model){
         model.addAttribute("id", id);

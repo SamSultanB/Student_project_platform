@@ -25,10 +25,8 @@ public class User {
     private String userName;
     @Column(name = "userSurname")
     private String userSurname;
-
     @Column(name = "email")
     private String email;
-
     @Column(name = "password")
     private String password;
 
@@ -52,8 +50,6 @@ public class User {
     )
     private Collection<Lecture> lectures;
 
-
-
     public User(
             String userName,
             String userSurname,
@@ -71,8 +67,6 @@ public class User {
     public void addLecture(Lecture lecture){
         this.lectures.add(lecture);
     }
-
-
 
     public void removeLecture(Long lectureId){
         Lecture lecture = this.lectures.stream().filter(lecture1 -> lecture1.getId() == lectureId).findFirst().orElse(null);
