@@ -17,7 +17,6 @@ public class LectureServiceImpl implements LectureService {
         this.userService = userService;
     }
 
-
     @Override
     public List<Lecture> getAllLectures() {
         return lectureRepository.findAll();
@@ -32,7 +31,6 @@ public class LectureServiceImpl implements LectureService {
     public Lecture saveLecture(Lecture lecture) {
         return lectureRepository.save(lecture);
     }
-
 
     @Override
     public Lecture getLectureById(Long id) {
