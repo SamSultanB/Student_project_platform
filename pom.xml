@@ -86,6 +86,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>student-projects-platform</finalName>
 	</build>
 
 </project>
