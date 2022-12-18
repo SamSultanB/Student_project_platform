@@ -25,7 +25,7 @@ public class Lecture {
     @ManyToMany(mappedBy = "lectures")
     private Collection<User> users;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
     @JoinColumn(name = "lecture_id", referencedColumnName = "id")
     private Collection<Project> projects;
 
